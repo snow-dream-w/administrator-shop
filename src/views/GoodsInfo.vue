@@ -10,7 +10,7 @@
         </el-form-item>
         <el-form-item label="图片" :label-width="formLabelWidth">
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://localhost:3000/user/upload"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
@@ -88,13 +88,16 @@ export default {
         this.$refs.multipleTable.clearSelection();
       }
     },
-
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
-
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      fetch("http://localhost:3000/goods/dropImage", {
+        method: "POST",
+        body: JSON.stringify({ filename: file.response }),
+        headers: new Headers({
+          "Content-Type": "application/json"
+        })
+      }).then(res => {
+        console.log(res);
+      });
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
