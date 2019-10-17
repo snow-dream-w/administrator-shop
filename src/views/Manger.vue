@@ -3,7 +3,6 @@
     <div class="header">
       <div class="title">后台管理</div>
     </div>
-
     <div class="body clearfix">
       <Row>
         <Col span="8" class="tac">
@@ -17,10 +16,30 @@
                   <Icon type="ios-people" />全部商品
                 </template>
                 <MenuItem name="2-1">
-                  <router-link to="/manger/goodsview">品质生鲜</router-link>
+                  <!-- <router-link to="/manger/goodsview"></router-link> -->
+                  <Dropdown trigger="click" placement= "right-start">
+                    <a href="javascript:void(0)">
+                     品质生鲜
+                      <Icon type="ios-arrow-down"></Icon>
+                    </a>
+                    <DropdownMenu slot="list">
+                    <template>
+                     <Breadcrumb>
+        <BreadcrumbItem to="/manger/goodsview">
+         <Icon type="logo-buffer"></Icon>炸酱面</BreadcrumbItem>
+        <BreadcrumbItem to="/manger/goodsview">
+         <Icon type="logo-buffer"></Icon>豆汁儿</BreadcrumbItem>
+        <BreadcrumbItem > 
+         <Icon type="logo-buffer"></Icon>北京烤鸭</BreadcrumbItem>
+    </Breadcrumb>
+</template>
+</DropdownMenu>
+                   
+                  </Dropdown>
                 </MenuItem>
                 <MenuItem name="2-2">
                   <router-link to="/manger/goodsview">节气水果</router-link>
+                  
                 </MenuItem>
               </Submenu>
               <MenuItem name="1-2">
@@ -48,16 +67,7 @@
 </template>
 
 <script>
-export default {
-  methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    }
-  }
-};
+export default {};
 </script>
 
 <style lang="scss" scoped>
@@ -70,11 +80,10 @@ export default {
     height: 96px;
     background: #66adff;
     border: 1px solid #ddd;
-    .title{
+    .title {
       font-size: 28px;
       text-align: center;
     }
-   
   }
   .body {
     display: flex;

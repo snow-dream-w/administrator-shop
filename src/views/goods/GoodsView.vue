@@ -1,8 +1,6 @@
 <template>
   <div>
-    
-     
-      <div class="nav">
+    <div class="nav">
         <div class="l">
           <div class="nav-search">
             <input type="text" placeholder="请输入要搜索的商品名称" class="searchInput" />
@@ -10,7 +8,6 @@
           </div>
         </div>
       </div>
-   
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -39,7 +36,7 @@
           <br />
           <el-button size="mini" type="text" @click="dialogVisible = true">下架</el-button>
 
-          <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center="false">
+          <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" >
             <span>确定要下架吗？</span>
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogVisible = false">取 消</el-button>
