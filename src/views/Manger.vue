@@ -14,7 +14,8 @@
               </template>
               <Submenu name="2">
                 <template slot="title">
-                  <Icon type="ios-people" />全部商品
+                  <Icon type="ios-people" />
+                  <router-link to="/manger/goodsview">全部商品</router-link>
                 </template>
                 <MenuItem name="2-1">
                   <router-link to="/manger/goodsview">品质生鲜</router-link>
@@ -30,7 +31,8 @@
             </Submenu>
             <Submenu name="3">
               <template slot="title">
-                <Icon type="ios-people" />订单管理
+                <Icon type="ios-people" />
+                <router-link to="/manger/orderManger">订单管理</router-link>
               </template>
               <MenuItem name="3-1">
                 <router-link to="/manger/orderManger">已支付</router-link>
@@ -70,11 +72,10 @@ export default {
     height: 96px;
     background: #66adff;
     border: 1px solid #ddd;
-    .title{
+    .title {
       font-size: 28px;
       text-align: center;
     }
-   
   }
   .body {
     display: flex;
