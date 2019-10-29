@@ -67,7 +67,7 @@
 
         <el-form-item label="上传图片限制四张">
           <el-upload
-            action="http://localhost:3000/goods/upload_goods_image"
+            action="/goods/upload_goods_image"
             list-type="picture-card"
             :limit="4"
             :on-exceed="handleExceed"
@@ -107,7 +107,7 @@ export default {
       }, 500);
     };
     var checkPrice = (rule, value, callback) => {
-      value = new String(value)
+      value = new String(value);
       if (!value) {
         return callback(new Error("价格不能为空"));
       }
@@ -120,7 +120,7 @@ export default {
       }, 500);
     };
     var checkInventoryNum = (rule, value, callback) => {
-      value = new String(value)
+      value = new String(value);
       if (!value) {
         return callback(new Error("库存不能为空"));
       }
@@ -159,60 +159,92 @@ export default {
       type: [],
       options: [
         {
-          value: "zhinan",
-          label: "指南",
+          value: "pinzhishengxian",
+          label: "品质生鲜",
           children: [
             {
-              value: "shejiyuanze",
-              label: "设计原则"
+              value: "shuiguo",
+              label: "水果"
             },
             {
-              value: "daohang",
-              label: "导航"
+              value: "shuicai",
+              label: "蔬菜"
             }
           ]
         },
         {
-          value: "zujian",
-          label: "组件",
+          value: "meizhuanghuli",
+          label: "美妆护理",
           children: [
             {
-              value: "basic",
-              label: "Basic"
+              value: "caizhuangxiangshui",
+              label: "彩妆香水"
             },
             {
-              value: "form",
-              label: "Form"
+              value: "mianmoyanghu",
+              label: "面膜养护"
             },
             {
-              value: "data",
-              label: "Data"
-            },
-            {
-              value: "notice",
-              label: "Notice"
-            },
-            {
-              value: "navigation",
-              label: "Navigation"
+              value: "gerenqingjie",
+              label: "个人清洁"
             }
           ]
         },
         {
-          value: "ziyuan",
-          label: "资源",
+          value: "jingzhishneghuo",
+          label: "精致生活",
           children: [
             {
-              value: "axure",
-              label: "Axure Components"
+              value: "jiajujiadian",
+              label: "家具家电"
             },
             {
-              value: "sketch",
-              label: "Sketch Templates"
+              value: "yundonghuwai",
+              label: "运动户外"
             },
             {
-              value: "jiaohu",
-              label: "组件交互文档"
+              value: "xiefuxiangbao",
+              label: "鞋服箱包"
+            }
+          ]
+        },
+        {
+          value: "chajiuyinliao",
+          label: "茶酒饮料",
+          children: [
+            {
+              value: "putaojiu",
+              label: "葡萄酒"
+            },
+            {
+              value: "baijiu",
+              label: "白酒"
+            },
+            {
+              value: "pijiu",
+              label: "啤酒"
+            },
+            {
+              value: "guozhiyinliao",
+              label: "果汁饮料"
+            }
+          ]
+        },
+        {
+          value: "nongditechan",
+          label: "农地特产",
+          children: [
+            {
+              value: "wuguzaliang",
+              label: "五谷杂粮"
+            },
+            {
+              value: "shanzhenganhuo",
+              label: "山珍干货"
+            },
+            {
+              value: "liangyoufushi",
+              label: "粮油副食"
             }
           ]
         }
@@ -222,20 +254,11 @@ export default {
   methods: {
     handleRemove(file, fileList) {
       let that = this;
-      fetch("http://localhost:3000/goods/dropImage", {
-        method: "POST",
-        body: JSON.stringify({ filename: file.response.data }),
-        headers: new Headers({
-          "Content-Type": "application/json"
-        })
-      }).then(res => {
-        if (res.status === 200) {
-          that.ruleForm.images.splice(
-            this.ruleForm.images.includes(file.response.data),
-            1
-          );
-        }
-      });
+      that.axios
+        .post("/goods/dropImage", { filename: file.response.data })
+        .then(result => {
+          console.log(result);
+        });
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
@@ -259,17 +282,14 @@ export default {
       let that = this;
       this.$refs[formName].validate(valid => {
         if (valid) {
-          that.ruleForm.price = new Number(that.ruleForm.price)
-          that.ruleForm.inventoryNum = new Number(that.ruleForm.inventoryNum)
-          fetch("http://localhost:3000/goods/add", {
-            method: "POST",
-            body: JSON.stringify(that.ruleForm),
-            headers: new Headers({
-              "Content-Type": "application/json"
-            })
-          }).then(res => {
-            console.log(res);
-            
+          that.ruleForm.price = new Number(that.ruleForm.price);
+          that.ruleForm.inventoryNum = new Number(that.ruleForm.inventoryNum);
+          that.axios.post("/goods/add", that.ruleForm).then(result => {
+            if(result.data.status === 1){
+              that.resetForm('ruleForm')
+            } else {
+              alert('404')
+            }
           });
         } else {
           console.log("error submit!!");

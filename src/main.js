@@ -14,6 +14,10 @@ Vue.component('Submenu', Submenu);
 Vue.component('Icon', Icon);
 Vue.component('MenuItem', MenuItem);
 
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false

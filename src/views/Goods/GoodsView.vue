@@ -1,16 +1,14 @@
 <template>
   <div>
-    
-     
-      <div class="nav">
-        <div class="l">
-          <div class="nav-search">
-            <input type="text" placeholder="请输入要搜索的商品名称" class="searchInput" />
-            <button class="searchBtn">搜索</button>
-          </div>
+    <div class="nav">
+      <div class="l">
+        <div class="nav-search">
+          <input type="text" placeholder="请输入要搜索的商品名称" class="searchInput" />
+          <button class="searchBtn">搜索</button>
         </div>
       </div>
-   
+    </div>
+
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -21,13 +19,13 @@
     >
       <el-table-column label="图片" width="120" align="center">
         <template slot-scope="scope">
-          <img :src="scope.row.image" width="50px" />
+          <img :src="scope.row.images[0]" width="50px" />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="名称" width="140" align="center"></el-table-column>
-      <el-table-column prop="describe" label="描述" width="180" align="center"></el-table-column>
+      <el-table-column prop="description" label="描述" width="180" align="center"></el-table-column>
       <el-table-column prop="price" label="单价" width="140" align="center"></el-table-column>
-      <el-table-column prop="count" label="库存" width="140" align="center"></el-table-column>
+      <el-table-column prop="inventoryNum" label="库存" width="140" align="center"></el-table-column>
       <el-table-column prop="unit" label="单位" width="140" align="center"></el-table-column>
 
       <el-table-column label="操作" width="162" align="center">
@@ -39,11 +37,11 @@
           <br />
           <el-button size="mini" type="text" @click="dialogVisible = true">下架</el-button>
 
-          <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center="false">
+          <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center>
             <span>确定要下架吗？</span>
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+              <el-button type="primary" @click="shelfGoodsInfo(scope.row._id)">确 定</el-button>
             </span>
           </el-dialog>
           <br />
@@ -65,48 +63,7 @@
 export default {
   data() {
     return {
-      tableData: [
-        {
-          image: require("@/assets/logo.png"),
-          name: "紫薯",
-          describe: "aaa",
-          price: 15.2,
-          count: 100,
-          unit: "斤"
-        },
-        {
-          image: require("@/assets/logo.png"),
-          name: "紫薯",
-          describe: "aaa",
-          price: 15.2,
-          count: 100,
-          unit: "斤"
-        },
-        {
-          image: require("@/assets/logo.png"),
-          name: "紫薯",
-          describe: "aaa",
-          price: 15.2,
-          count: 100,
-          unit: "斤"
-        },
-        {
-          image: require("@/assets/logo.png"),
-          name: "紫薯",
-          describe: "aaa",
-          price: 15.2,
-          count: 100,
-          unit: "斤"
-        },
-        {
-          image: require("@/assets/logo.png"),
-          name: "紫薯",
-          describe: "aaa",
-          price: 15.2,
-          count: 100,
-          unit: "斤"
-        }
-      ],
+      tableData: [],
       dialogVisible: false
     };
   },
@@ -131,44 +88,77 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    shelfGoodsInfo(_id) {
+      this.dialogVisible = false;
+      let that = this;
+      this.axios
+        .post("http://localhost:3000/goods/shelves", {
+          _id: _id
+        })
+        .then(result => {
+          if (result.data.status === 1) {
+            for (let index = 0; index < that.tableData.length; index++) {
+              if (that.tableData[index]._id === _id) {
+                that.tableData.splice(index, 1);
+                that.$message({
+                  message: "下架成功",
+                  type: "success"
+                });
+                break;
+              }
+            }
+          } else {
+            alert("404");
+          }
+        });
     }
+  },
+  created() {
+    let that = this;
+    this.axios.get("http://localhost:3000/goods/query/3").then(result => {
+      if (result.data.status === 1) {
+        that.tableData = result.data.data;
+      } else {
+        alert("404");
+      }
+    });
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.nav {
+  width: 100%;
+  height: 50px;
+  .l {
+    width: 45%;
+    height: 50px;
+    float: right;
+  }
+  .nav-search {
+    width: 384px;
+    height: 45px;
+    line-height: 38px;
+    border: 2px solid #66a3ff;
 
-    .nav {
-      width: 100%;
-      height: 50px;
-      .l {
-        width: 45%;
-        height: 50px;
-        float: right;
-      }
-      .nav-search {
-        width: 384px;
-        height: 45px;
-        line-height: 38px;
-        border: 2px solid #66a3ff;
-
-        .searchInput {
-          width: 300px;
-          height: 42px;
-          font-size: 14px;
-          padding: 8px;
-          border: 2px solid #66a3ff;
-        }
-        .searchBtn {
-          width: 80px;
-          height: 42px;
-          font-size: 16px;
-          color: #fff;
-          border: 2px solid #66a3ff;
-          background: #66a3ff;
-        }
-      }
+    .searchInput {
+      width: 300px;
+      height: 42px;
+      font-size: 14px;
+      padding: 8px;
+      border: 2px solid #66a3ff;
     }
+    .searchBtn {
+      width: 80px;
+      height: 42px;
+      font-size: 16px;
+      color: #fff;
+      border: 2px solid #66a3ff;
+      background: #66a3ff;
+    }
+  }
+}
 </style>
 
 
