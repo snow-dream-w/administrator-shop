@@ -116,7 +116,7 @@ export default {
   },
   created() {
     let that = this;
-    this.axios.get("http://localhost:3000/goods/query/3").then(result => {
+    this.axios.get("http://localhost:3000/goods/query/8").then(result => {
       if (result.data.status === 1) {
         that.tableData = result.data.data;
       } else {

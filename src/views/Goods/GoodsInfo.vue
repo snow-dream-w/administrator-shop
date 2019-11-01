@@ -67,7 +67,7 @@
 
         <el-form-item label="上传图片限制四张">
           <el-upload
-            action="/goods/upload_goods_image"
+            action="http://localhost:3000/goods/upload_goods_image"
             list-type="picture-card"
             :limit="4"
             :on-exceed="handleExceed"
@@ -255,7 +255,7 @@ export default {
     handleRemove(file, fileList) {
       let that = this;
       that.axios
-        .post("/goods/dropImage", { filename: file.response.data })
+        .post("http://localhost:3000/goods/dropImage", { filename: file.response.data })
         .then(result => {
           console.log(result);
         });
@@ -284,7 +284,7 @@ export default {
         if (valid) {
           that.ruleForm.price = new Number(that.ruleForm.price);
           that.ruleForm.inventoryNum = new Number(that.ruleForm.inventoryNum);
-          that.axios.post("/goods/add", that.ruleForm).then(result => {
+          that.axios.post("http://localhost:3000/goods/add", that.ruleForm).then(result => {
             if(result.data.status === 1){
               that.resetForm('ruleForm')
             } else {
