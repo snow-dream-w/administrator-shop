@@ -191,7 +191,7 @@ export default {
           ]
         },
         {
-          value: "jingzhishneghuo",
+          value: "jingzhishenghuo",
           label: "精致生活",
           children: [
             {
@@ -287,8 +287,9 @@ export default {
           that.axios.post("http://localhost:3000/goods/add", that.ruleForm).then(result => {
             if(result.data.status === 1){
               that.resetForm('ruleForm')
+              that.$router.go(0)
             } else {
-              alert('404')
+              console.log(result.data.data);
             }
           });
         } else {

@@ -64,7 +64,8 @@ export default {
   data() {
     return {
       tableData: [],
-      dialogVisible: false
+      dialogVisible: false,
+      controllerStatus: false
     };
   },
   methods: {
@@ -92,26 +93,26 @@ export default {
     shelfGoodsInfo(_id) {
       this.dialogVisible = false;
       let that = this;
-      this.axios
-        .post("http://localhost:3000/goods/shelves", {
-          _id: _id
-        })
-        .then(result => {
-          if (result.data.status === 1) {
-            for (let index = 0; index < that.tableData.length; index++) {
-              if (that.tableData[index]._id === _id) {
-                that.tableData.splice(index, 1);
-                that.$message({
-                  message: "下架成功",
-                  type: "success"
-                });
-                break;
-              }
-            }
-          } else {
-            alert("404");
-          }
-        });
+      // this.axios
+      //   .post("http://localhost:3000/goods/shelves", {
+      //     _id: _id
+      //   })
+      //   .then(result => {
+      //     if (result.data.status === 1) {
+      //       for (let index = 0; index < that.tableData.length; index++) {
+      //         if (that.tableData[index]._id === _id) {
+      //           that.tableData.splice(index, 1);
+      //           that.$message({
+      //             message: "下架成功",
+      //             type: "success"
+      //           });
+      //           break;
+      //         }
+      //       }
+      //     } else {
+      //       alert("404");
+      //     }
+      //   });
     }
   },
   created() {
