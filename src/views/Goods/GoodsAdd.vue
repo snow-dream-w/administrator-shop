@@ -64,10 +64,10 @@
             style="width:150px"
           ></el-input>
         </el-form-item>
-
         <el-form-item label="上传图片限制四张">
           <el-upload
-            action="http://localhost:3000/goods/upload_goods_image"
+            ref="imagefile"
+            :action="staticBaseUrl + '/goods/upload_goods_image'"
             list-type="picture-card"
             :limit="4"
             :on-exceed="handleExceed"
@@ -78,7 +78,7 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisibleImage" size="tiny" class="avatar">
-            <img width="100%" :src="dialogImageUrl" class="avatar" />
+            <img width="100%" :src="staticBaseUrl + dialogImageUrl" class="avatar" />
           </el-dialog>
         </el-form-item>
 
@@ -94,7 +94,7 @@
 <script>
 export default {
   data() {
-    var checkName = (rule, value, callback) => {
+    const checkName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("名称不能为空"));
       }
@@ -106,7 +106,7 @@ export default {
         }
       }, 500);
     };
-    var checkPrice = (rule, value, callback) => {
+    const checkPrice = (rule, value, callback) => {
       value = new String(value);
       if (!value) {
         return callback(new Error("价格不能为空"));
@@ -119,7 +119,7 @@ export default {
         }
       }, 500);
     };
-    var checkInventoryNum = (rule, value, callback) => {
+    const checkInventoryNum = (rule, value, callback) => {
       value = new String(value);
       if (!value) {
         return callback(new Error("库存不能为空"));
@@ -137,12 +137,12 @@ export default {
       dialogVisibleImage: false,
       dialogImageUrl: "",
       ruleForm: {
-        name: "梨子",
-        description: "无",
-        price: "10",
-        specification: "无",
-        unit: "斤",
-        inventoryNum: "10",
+        name: "",
+        description: "",
+        price: "",
+        specification: "",
+        unit: "",
+        inventoryNum: "",
         types: "",
         type: "",
         images: []
@@ -253,9 +253,8 @@ export default {
   },
   methods: {
     handleRemove(file, fileList) {
-      let that = this;
-      that.axios
-        .post("http://localhost:3000/goods/dropImage", { filename: file.response.data })
+      this.axios
+        .post("/goods/dropImage", { filename: file.response.data })
         .then(result => {
           console.log(result);
         });
@@ -279,21 +278,27 @@ export default {
       this.ruleForm.type = value[1];
     },
     submitForm(formName) {
-      let that = this;
       this.$refs[formName].validate(valid => {
         if (valid) {
-          that.ruleForm.price = new Number(that.ruleForm.price);
-          that.ruleForm.inventoryNum = new Number(that.ruleForm.inventoryNum);
-          that.axios.post("http://localhost:3000/goods/add", that.ruleForm).then(result => {
+          this.ruleForm.price = new Number(this.ruleForm.price);
+          this.ruleForm.inventoryNum = new Number(this.ruleForm.inventoryNum);
+          this.axios.post("/goods/add", this.ruleForm).then(result => {
             if(result.data.status === 1){
-              that.resetForm('ruleForm')
-              that.$router.go(0)
+              this.$message({
+                type: 'success',
+                message: '添加商品成功'
+              })
+              this.$refs.ruleForm.resetFields()
+              this.$refs.imagefile.clearFiles()
             } else {
-              console.log(result.data.data);
+              this.$message({
+                type: 'warning',
+                message: result.data.data
+              })
             }
           });
         } else {
-          console.log("error submit!!");
+          this.$message.error("error submit!!")
           return false;
         }
       });

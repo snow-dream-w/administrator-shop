@@ -16,10 +16,20 @@ Vue.component('MenuItem', MenuItem);
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+
+// 配置axios基础地址
+axios.defaults.baseURL = "http://localhost:3000";
+axios.interceptors.request.use((config) => {
+  config.withCredentials = true
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+//挂载地址,仅测试用，打包前设为空
+Vue.prototype.staticBaseUrl = "http://localhost:3000"
+
 Vue.use(VueAxios, axios)
-
 Vue.use(ElementUI)
-
 Vue.config.productionTip = false
 
 new Vue({

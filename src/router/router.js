@@ -8,36 +8,36 @@ export default new Router({
     {
       path: '/',
       name: 'manger',
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Manger.vue'),
+      component: () => import('@/views/Manger.vue'),
     },
     {
       path: '/order',
       name: 'order',
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Order/Order.vue')
+      component: () => import('@/views/Order/Order.vue')
     },
     {
       path: '/orderDetail',
       name: 'orderDetail',
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Order/OrderDetail.vue')
+      component: () => import('@/views/Order/OrderDetail.vue')
     },
     {
       path: '/manger',
       name: 'manger',
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Manger.vue'),
+      component: () => import('@/views/Manger.vue'),
       redirect: '/manger/goodsView',
       children: [
         {
-          path: 'goodsView',
+          path: 'goodsView/:type',
           name: 'goodsView',
-          component: () => import(/* webpackChunkName: "about" */ '@/views/Goods/GoodsView.vue')
+          component: () => import('@/views/Goods/GoodsView.vue')
         }, {
           path: 'orderManger',
           name: 'orderManger',
-          component: () => import(/* webpackChunkName: "about" */ '@/views/Order/OrderManger.vue')
+          component: () => import('@/views/Order/OrderManger.vue')
         }, {
-          path: 'goodsInfo',
-          name: 'goodsInfo',
-          component: () => import(/* webpackChunkName: "about" */ '@/views/Goods/GoodsInfo.vue')
+          path: 'goodsAdd',
+          name: 'goodsAdd',
+          component: () => import('@/views/Goods/GoodsAdd.vue')
         }
       ]
     },

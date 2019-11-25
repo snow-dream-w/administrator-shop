@@ -3,7 +3,7 @@
     <div class="productList">
       <ul>
         <li v-for="item in list" :key="item.id">
-          <img :src="item.image" alt />
+          <img :src="staticBaseUrl + item.image" alt />
           <p>{{item.name}}</p>
           <div class="goodsPrice">
             <span class="money">{{item.price}}</span>

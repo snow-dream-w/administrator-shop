@@ -5,7 +5,7 @@
         <el-table :data="scope.row.goods" border style="width: 100%">
           <el-table-column width="108">
             <template slot-scope="scope">
-              <img :src="scope.row.image" style="width: 80px;height: 80px;" />
+              <img :src="staticBaseUrl + scope.row.image" style="width: 80px;height: 80px;" />
             </template>
           </el-table-column>
           <el-table-column label="名称" prop="name" width="186" align="center"></el-table-column>

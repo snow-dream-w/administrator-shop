@@ -19,7 +19,7 @@
     >
       <el-table-column label="图片" width="120" align="center">
         <template slot-scope="scope">
-          <img :src="scope.row.images[0]" width="50px" />
+          <img :src="staticBaseUrl + scope.row.images[0]" width="50px" />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="名称" width="140" align="center"></el-table-column>
@@ -27,29 +27,16 @@
       <el-table-column prop="price" label="单价" width="140" align="center"></el-table-column>
       <el-table-column prop="inventoryNum" label="库存" width="140" align="center"></el-table-column>
       <el-table-column prop="unit" label="单位" width="140" align="center"></el-table-column>
-
       <el-table-column label="操作" width="162" align="center">
         <template slot-scope="scope">
-          <router-link to="/manger/goodsInfo">
-            <el-button size="mini" type="text">编辑</el-button>
-          </router-link>
-
+          <el-button size="mini" type="text">编辑</el-button>
           <br />
-          <el-button size="mini" type="text" @click="dialogVisible = true">下架</el-button>
-
-          <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" center>
-            <span>确定要下架吗？</span>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="shelfGoodsInfo(scope.row._id)">确 定</el-button>
-            </span>
-          </el-dialog>
+          <el-button size="mini" type="text" @click="confirmShelfGoods(scope.row._id)">下架</el-button>
           <br />
-
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
+            @click="handleDelete(scope.row._id)"
             plain
             disabled
           >删除</el-button>
@@ -58,51 +45,47 @@
     </el-table>
   </div>
 </template>
-
 <script>
 export default {
   data() {
     return {
       tableData: [],
-      dialogVisible: false,
-      controllerStatus: false
+      controllerStatus: false,
+      limit: 100
     };
   },
   methods: {
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
+    handleDelete(goodsId) {
+      // alert(goodsId)
+    },
+    confirmShelfGoods(_id) {
+      this.$confirm("此操作将下架该商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.shelfGoodsInfo(_id);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
         });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
-    },
-
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
-
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
     },
     shelfGoodsInfo(_id) {
-      this.dialogVisible = false;
-      let that = this;
+      alert(_id)
       // this.axios
-      //   .post("http://localhost:3000/goods/shelves", {
+      //   .post("/goods/shelves", {
       //     _id: _id
       //   })
       //   .then(result => {
       //     if (result.data.status === 1) {
-      //       for (let index = 0; index < that.tableData.length; index++) {
-      //         if (that.tableData[index]._id === _id) {
-      //           that.tableData.splice(index, 1);
-      //           that.$message({
+      //       for (let index = 0; index < this.tableData.length; index++) {
+      //         if (this.tableData[index]._id === _id) {
+      //           this.tableData.splice(index, 1);
+      //           this.$message({
       //             message: "下架成功",
       //             type: "success"
       //           });
@@ -113,17 +96,35 @@ export default {
       //       alert("404");
       //     }
       //   });
+    },
+    init(type) {
+      this.axios
+        .get("/goods/query", {
+          params: {
+            type,
+            limit: this.limit,
+            status: 1
+          }
+        })
+        .then(result => {
+          if (result.data.status === 1) {
+            this.tableData = result.data.data;
+            // this.total = result.data.count;
+          } else {
+            alert(404);
+          }
+        });
+    }
+  },
+  watch: {
+    "$route.path": function() {
+      const type = this.$route.params.type;
+      this.init(type);
     }
   },
   created() {
-    let that = this;
-    this.axios.get("http://localhost:3000/goods/query/8").then(result => {
-      if (result.data.status === 1) {
-        that.tableData = result.data.data;
-      } else {
-        alert("404");
-      }
-    });
+    const type = this.$route.params.type;
+    this.init(type);
   }
 };
 </script>
