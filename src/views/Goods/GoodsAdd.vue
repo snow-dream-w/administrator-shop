@@ -67,7 +67,7 @@
         <el-form-item label="上传图片限制四张">
           <el-upload
             ref="imagefile"
-            :action="staticBaseUrl + '/goods/upload_goods_image'"
+            :action="axios.defaults.baseURL + '/goods/upload_goods_image'"
             list-type="picture-card"
             :limit="4"
             :on-exceed="handleExceed"
@@ -78,7 +78,7 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisibleImage" size="tiny" class="avatar">
-            <img width="100%" :src="staticBaseUrl + dialogImageUrl" class="avatar" />
+            <img width="100%" :src="axios.defaults.baseURL + dialogImageUrl" class="avatar" />
           </el-dialog>
         </el-form-item>
 

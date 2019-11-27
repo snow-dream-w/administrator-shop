@@ -5,7 +5,7 @@
         <el-table :data="scope.row.goods" border style="width: 100%">
           <el-table-column width="120">
             <template slot-scope="scope">
-              <img :src="staticBaseUrl + scope.row.image" style="width: 80px;height: 80px;" />
+              <img :src="axios.defaults.baseURL + scope.row.image" style="width: 80px;height: 80px;" />
             </template>
           </el-table-column>
           <el-table-column label="名称" prop="name" width="166" align="center"></el-table-column>

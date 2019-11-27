@@ -1,14 +1,26 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import axios from 'axios'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'manger',
-      component: () => import('@/views/Manger.vue'),
+      name: 'manager',
+      meta: {
+        requireAuth: false
+      },
+      component: () => import('@/views/Manager.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      meta: {
+        requireAuth: false
+      },
+      component: () => import('@/views/LoginDialog.vue')
     },
     {
       path: '/order',
@@ -21,10 +33,9 @@ export default new Router({
       component: () => import('@/views/Order/OrderDetail.vue')
     },
     {
-      path: '/manger',
-      name: 'manger',
-      component: () => import('@/views/Manger.vue'),
-      redirect: '/manger/goodsView',
+      path: '/manager',
+      name: 'manager',
+      component: () => import('@/views/Manager.vue'),
       children: [
         {
           path: 'goodsView/:type',
@@ -43,3 +54,21 @@ export default new Router({
     },
   ]
 })
+router.beforeEach((to, from, next) => {
+  if (!navigator.onLine) {
+    alert('网络未连接，请连接网络重试！')
+    return;
+  }
+  if (to.meta.requireAuth !== false) {
+    axios.get('/user/check_login').then(result => {
+      if (result.data.status === 1) {
+        next()
+      } else {
+        next('/login')
+      }
+    })
+  } else {
+    next()
+  }
+});
+export default router

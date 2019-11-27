@@ -25,8 +25,6 @@ axios.interceptors.request.use((config) => {
 }, (error) => {
   return Promise.reject(error)
 })
-//挂载地址,仅测试用，打包前设为空
-Vue.prototype.staticBaseUrl = "http://localhost:3000"
 
 Vue.use(VueAxios, axios)
 Vue.use(ElementUI)

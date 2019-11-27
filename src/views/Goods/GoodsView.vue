@@ -19,7 +19,7 @@
     >
       <el-table-column label="图片" width="120" align="center">
         <template slot-scope="scope">
-          <img :src="staticBaseUrl + scope.row.images[0]" width="50px" />
+          <img :src="axios.defaults.baseURL + scope.row.images[0]" width="50px" />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="名称" width="140" align="center"></el-table-column>

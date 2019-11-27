@@ -10,12 +10,12 @@
             <template slot="title">
               <Icon type="md-list" />商品分类
             </template>
-            <Submenu v-for="items in options" :name="items.value">
+            <Submenu v-for="items in options" :name="items.value" :key="items.value">
               <template slot="title">
                 <Icon type="md-code" />
                 {{items.label}}
               </template>
-              <MenuItem v-for="item in items.children" :name="item.value">{{item.label}}</MenuItem>
+              <MenuItem v-for="item in items.children" :name="item.value" :key="item.value">{{item.label}}</MenuItem>
             </Submenu>
           </Submenu>
           <MenuItem name="shelf">
@@ -143,10 +143,10 @@ export default {
   methods: {
     changeGoods(value) {
       if(value === 'add'){
-        this.$router.push('/manger/goodsAdd')
+        this.$router.push('/manager/goodsAdd')
         return
       }
-      this.$router.push(`/manger/goodsView/${value}`)
+      this.$router.push(`/manager/goodsView/${value}`)
     },
     changeOrder(value) {
       alert(value + "order");
