@@ -31,10 +31,13 @@
           <template slot="title">
             <Icon type="md-albums" />订单管理
           </template>
-          <MenuItem name="1-1">
+          <MenuItem name="2">
             <Icon type="logo-yen" />已支付
           </MenuItem>
-          <MenuItem name="1-2">
+          <MenuItem name="3">
+            <Icon type="ios-car-outline" />已发货
+          </MenuItem>
+          <MenuItem name="4">
             <Icon type="md-checkmark" />已完成
           </MenuItem>
         </Submenu>
@@ -149,7 +152,7 @@ export default {
       this.$router.push(`/manager/goodsView/${value}`)
     },
     changeOrder(value) {
-      alert(value + "order");
+      this.$router.push(`/manager/orderManager/${value}`)
     }
   }
 };

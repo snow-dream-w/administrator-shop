@@ -1,6 +1,6 @@
 <template>
-  <div class="dialog">
-    <el-dialog title="登录" :visible="!$store.state.login_status" width="410px">
+  <div>
+    <el-dialog class="dialog" title="管理员登录" :visible="!$store.state.login_status" width="410px">
       <el-form
         :model="ruleForm"
         status-icon
@@ -15,6 +15,7 @@
             v-model="ruleForm.name"
             autocomplete="off"
             placeholder="请输入用户名"
+            prefix-icon="el-icon-user"
             v-on:input="changeValue"
           ></el-input>
         </el-form-item>
@@ -24,6 +25,7 @@
             v-model="ruleForm.password"
             autocomplete="off"
             placeholder="请输入密码"
+            prefix-icon="el-icon-lock"
             v-on:input="changeValue"
           ></el-input>
         </el-form-item>
@@ -33,6 +35,10 @@
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
       </el-form>
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+      </span> -->
     </el-dialog>
   </div>
 </template>
@@ -54,7 +60,7 @@ export default {
   },
   methods: {
     changeValue() {
-      this.point = ""
+      this.point = "";
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
@@ -68,9 +74,15 @@ export default {
               if (res.data.status === 0) {
                 this.point = res.data.data;
               } else {
-                this.$store.dispatch("changeAnsyc_login_status", true);
-                this.$refs.ruleForm.resetFields()
-                this.$router.push('/manager')
+                if (res.data.data.role !== "666") {
+                  console.log(res);
+                  this.axios.get("/user/logout");
+                  this.point = "账号或密码输入错误";
+                } else {
+                  this.$store.dispatch("changeAnsyc_login_status", true);
+                  this.$refs.ruleForm.resetFields();
+                  this.$router.push("/manager");
+                }
               }
             });
         } else {
@@ -81,14 +93,24 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }
+  },
+  created() {
+    this.axios.get("/user/check_login").then(result => {
+      if (result.data.status === 1) {
+        this.$router.push("/");
+      }
+    });
   }
 };
 </script>
 <style lang="scss" scoped>
+.dialog{
+  height: 400px;
+}
 .demo-ruleForm {
   width: 85%;
 }
-.warning{
+.warning {
   display: inline-block;
   color: red;
   text-indent: 2em;

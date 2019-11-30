@@ -42,9 +42,9 @@ const router = new Router({
           name: 'goodsView',
           component: () => import('@/views/Goods/GoodsView.vue')
         }, {
-          path: 'orderManger',
-          name: 'orderManger',
-          component: () => import('@/views/Order/OrderManger.vue')
+          path: 'orderManager/:orderStatus',
+          name: 'orderManager',
+          component: () => import('@/views/Order/OrderManager.vue')
         }, {
           path: 'goodsAdd',
           name: 'goodsAdd',

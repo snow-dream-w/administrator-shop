@@ -3,7 +3,8 @@
     <div class="header">
       <div class="title">二号小店后台管理</div>
       <div class="login">
-        <span class="logout" @click="logout">注销</span>
+        <span v-if="$store.state.login_status" class="logout" @click="logout">注销</span>
+        <span v-else class="logout" @click="$router.push('/login')">登录</span>
         <el-avatar class="avatar" :size="60" src="https://empty" @error="errorHandler">
           <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
         </el-avatar>
@@ -26,16 +27,23 @@ export default {
     errorHandler() {
       return false;
     },
-    logout(){
-      this.axios.get('/user/logout').then(result => {
-        if(result.data.status === 1){
+    logout() {
+      this.axios.get("/user/logout").then(result => {
+        if (result.data.status === 1) {
           this.$store.dispatch("changeAnsyc_login_status", false);
-          this.$router.push('/login')
-        }else{
-          this.$message.error('注销失败，请重新尝试！')
+          this.$router.push("/login");
+        } else {
+          this.$message.error(result.data.data);
         }
-      })
+      });
     }
+  },
+  created() {
+    this.axios.get("/user/check_login").then(result => {
+      if (result.data.status === 1) {
+        this.$store.dispatch("changeAnsyc_login_status", true);
+      }
+    });
   }
 };
 </script>
@@ -49,7 +57,7 @@ export default {
     position: relative;
     width: 100%;
     height: 96px;
-    background: #66adff;
+    background: #409EFF;
     border: 1px solid #ddd;
     .title {
       font-size: 28px;
@@ -61,7 +69,7 @@ export default {
       top: 0;
       right: 15px;
       float: right;
-      .logout{
+      .logout {
         display: inline-block;
         position: absolute;
         left: -40px;
@@ -69,7 +77,7 @@ export default {
         font-size: 14px;
         cursor: pointer;
       }
-      .avatar{
+      .avatar {
         margin-top: 20px;
       }
     }

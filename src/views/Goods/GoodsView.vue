@@ -1,14 +1,6 @@
 <template>
   <div>
-    <div class="nav">
-      <div class="l">
-        <div class="nav-search">
-          <input type="text" placeholder="请输入要搜索的商品名称" class="searchInput" />
-          <button class="searchBtn">搜索</button>
-        </div>
-      </div>
-    </div>
-
+    <goods-search />
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -46,6 +38,7 @@
   </div>
 </template>
 <script>
+import GoodsSearch from '@/components/GoodsSearch'
 export default {
   data() {
     return {
@@ -75,27 +68,26 @@ export default {
         });
     },
     shelfGoodsInfo(_id) {
-      alert(_id)
-      // this.axios
-      //   .post("/goods/shelves", {
-      //     _id: _id
-      //   })
-      //   .then(result => {
-      //     if (result.data.status === 1) {
-      //       for (let index = 0; index < this.tableData.length; index++) {
-      //         if (this.tableData[index]._id === _id) {
-      //           this.tableData.splice(index, 1);
-      //           this.$message({
-      //             message: "下架成功",
-      //             type: "success"
-      //           });
-      //           break;
-      //         }
-      //       }
-      //     } else {
-      //       alert("404");
-      //     }
-      //   });
+      this.axios
+        .post("/goods/shelves", {
+          _id: _id
+        })
+        .then(result => {
+          if (result.data.status === 1) {
+            for (let index = 0; index < this.tableData.length; index++) {
+              if (this.tableData[index]._id === _id) {
+                this.tableData.splice(index, 1);
+                this.$message({
+                  message: "下架成功",
+                  type: "success"
+                });
+                break;
+              }
+            }
+          } else {
+            alert("404");
+          }
+        });
     },
     init(type) {
       this.axios
@@ -122,6 +114,9 @@ export default {
       this.init(type);
     }
   },
+  components: {
+    GoodsSearch
+  },
   created() {
     const type = this.$route.params.type;
     this.init(type);
@@ -130,37 +125,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.nav {
-  width: 100%;
-  height: 50px;
-  .l {
-    width: 45%;
-    height: 50px;
-    float: right;
-  }
-  .nav-search {
-    width: 384px;
-    height: 45px;
-    line-height: 38px;
-    border: 2px solid #66a3ff;
 
-    .searchInput {
-      width: 300px;
-      height: 42px;
-      font-size: 14px;
-      padding: 8px;
-      border: 2px solid #66a3ff;
-    }
-    .searchBtn {
-      width: 80px;
-      height: 42px;
-      font-size: 16px;
-      color: #fff;
-      border: 2px solid #66a3ff;
-      background: #66a3ff;
-    }
-  }
-}
 </style>
 
 
