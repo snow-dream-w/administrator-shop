@@ -28,8 +28,8 @@
     </el-table-column>
     <el-table-column label="操作" width="144" align="center">
       <template slot-scope="scope">
-        <el-button @click="handleClick(scope.row)" type="text" size="small">订单详情</el-button>
-        <el-button v-if="scope.row.status === 2" type="primary" size="small">确认发货</el-button>
+        <el-button type="text" size="small" @click="handleClick(scope.row)">订单详情</el-button>
+        <el-button v-if="scope.row.status === 2" type="primary" size="small" @click="$message.error('确认发货，暂不可用！')">确认发货</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -51,7 +51,8 @@ export default {
   },
   methods: {
     handleClick(row) {
-      console.log(row);
+      this.$message.error('订单详情，暂不可用！')
+      // console.log(row);
     },
     init(orderStatus) {
       this.axios.get(`/order/orderList/${orderStatus}`).then(result => {

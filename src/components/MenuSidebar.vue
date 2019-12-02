@@ -15,7 +15,11 @@
                 <Icon type="md-code" />
                 {{items.label}}
               </template>
-              <MenuItem v-for="item in items.children" :name="item.value" :key="item.value">{{item.label}}</MenuItem>
+              <MenuItem
+                v-for="item in items.children"
+                :name="item.value"
+                :key="item.value"
+              >{{item.label}}</MenuItem>
             </Submenu>
           </Submenu>
           <MenuItem name="shelf">
@@ -145,14 +149,17 @@ export default {
   },
   methods: {
     changeGoods(value) {
-      if(value === 'add'){
-        this.$router.push('/manager/goodsAdd')
-        return
+      if (value === "add") {
+        this.$router.push("/manager/goodsAdd");
+        return;
       }
-      this.$router.push(`/manager/goodsView/${value}`)
+      if (value === "shelf") {
+        this.$router.push(`/manager/goodsView/${value}`);
+      }
+      this.$router.push(`/manager/goodsView/${value}`);
     },
     changeOrder(value) {
-      this.$router.push(`/manager/orderManager/${value}`)
+      this.$router.push(`/manager/orderManager/${value}`);
     }
   }
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="nav">
     <div class="right">
-      <el-input class="search" placeholder="请输入内容" prefix-icon="el-icon-search" v-model="keyWords"></el-input>
+      <el-input class="search" placeholder="请输入内容" prefix-icon="el-icon-search" v-model="params.keyWords"></el-input>
       <el-button type="primary">查找</el-button>
     </div>
   </div>

@@ -18,19 +18,33 @@
       <el-table-column prop="description" label="描述" width="180" align="center"></el-table-column>
       <el-table-column prop="price" label="单价" width="140" align="center"></el-table-column>
       <el-table-column prop="inventoryNum" label="库存" width="140" align="center"></el-table-column>
-      <el-table-column prop="unit" label="单位" width="140" align="center"></el-table-column>
-      <el-table-column label="操作" width="162" align="center">
+      <el-table-column prop="unit" label="单位" width="120" align="center"></el-table-column>
+      <el-table-column label="操作" width="182" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="text">编辑</el-button>
-          <br />
-          <el-button size="mini" type="text" @click="confirmShelfGoods(scope.row._id)">下架</el-button>
-          <br />
           <el-button
+            v-if="scope.row.status === 1"
+            size="mini"
+            type="primary"
+            @click="$message.error('编辑，暂不可用')"
+          >编辑</el-button>
+          <el-button
+            v-if="scope.row.status === 1"
             size="mini"
             type="danger"
-            @click="handleDelete(scope.row._id)"
+            @click="confirmShelfGoods(scope.row._id)"
+          >下架</el-button>
+          <el-button
+            v-if="scope.row.status === 0"
+            size="mini"
+            type="primary"
+            @click="$message.error('重新上架，暂不可用')"
+          >重新上架</el-button>
+          <el-button
+            v-if="scope.row.status === 0"
+            size="mini"
+            type="danger"
+            @click="confirmDeleteGoods(scope.row._id)"
             plain
-            disabled
           >删除</el-button>
         </template>
       </el-table-column>
@@ -38,7 +52,7 @@
   </div>
 </template>
 <script>
-import GoodsSearch from '@/components/GoodsSearch'
+import GoodsSearch from "@/components/GoodsSearch";
 export default {
   data() {
     return {
@@ -48,8 +62,43 @@ export default {
     };
   },
   methods: {
-    handleDelete(goodsId) {
-      // alert(goodsId)
+    confirmDeleteGoods(_id) {
+      this.$confirm("此操作永久删除该商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.handleDelete(_id);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    handleDelete(_id) {
+      this.axios
+        .post("/goods/delete", {
+          _id: _id
+        })
+        .then(result => {
+          if (result.data.status === 1) {
+            for (let index = 0; index < this.tableData.length; index++) {
+              if (this.tableData[index]._id === _id) {
+                this.tableData.splice(index, 1);
+                this.$message({
+                  message: "删除成功",
+                  type: "success"
+                });
+                break;
+              }
+            }
+          } else {
+            this.$message.error("删除失败，请重新尝试");
+          }
+        });
     },
     confirmShelfGoods(_id) {
       this.$confirm("此操作将下架该商品, 是否继续?", "提示", {
@@ -85,9 +134,19 @@ export default {
               }
             }
           } else {
-            alert("404");
+            this.$message.error(result.data.data);
           }
         });
+    },
+    getShelfGoods(status) {
+      this.axios.get(`/goods/shelf/${status}`).then(result => {
+        if (result.data.status === 1) {
+          this.tableData = result.data.data;
+        } else {
+          this.$message.error("数据加载失败，请重新尝试");
+          this.tableData = [];
+        }
+      });
     },
     init(type) {
       this.axios
@@ -103,7 +162,8 @@ export default {
             this.tableData = result.data.data;
             // this.total = result.data.count;
           } else {
-            alert(404);
+            this.$message.error("数据加载失败，请重新尝试");
+            this.tableData = [];
           }
         });
     }
@@ -111,7 +171,12 @@ export default {
   watch: {
     "$route.path": function() {
       const type = this.$route.params.type;
-      this.init(type);
+      if (type === "shelf") {
+        // 此时的0为状态码，与后端约定0为已下架
+        this.getShelfGoods(0);
+      } else {
+        this.init(type);
+      }
     }
   },
   components: {
@@ -119,13 +184,17 @@ export default {
   },
   created() {
     const type = this.$route.params.type;
-    this.init(type);
+    if (type === "shelf") {
+      // 此时的0为状态码，与后端约定0为已下架
+      this.getShelfGoods(0);
+    } else {
+      this.init(type);
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
 </style>
 
 
