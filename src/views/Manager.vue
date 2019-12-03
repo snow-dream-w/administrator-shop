@@ -52,7 +52,6 @@ export default {
 .container {
   width: 100%;
   height: 100%;
-
   .header {
     position: relative;
     width: 100%;
@@ -84,8 +83,8 @@ export default {
   }
   .body {
     display: flex;
-    width: 100%;
-    margin: 1px;
+    width: 1260px;
+    margin: auto;
     .tac {
       width: 238px;
     }

@@ -52,6 +52,11 @@ const router = new Router({
         }
       ]
     },
+    {
+      path: '/*',
+      name: '*',
+      component: () => import('@/views/NotFound.vue')
+    }
   ]
 })
 router.beforeEach((to, from, next) => {
