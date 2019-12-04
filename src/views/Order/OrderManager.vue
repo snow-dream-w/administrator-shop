@@ -79,7 +79,8 @@ export default {
     sendGoods(orderId) {
       this.axios
         .put(`/order/sending`, {
-          orderId
+          orderId,
+          status: 3
         })
         .then(result => {
           if (result.data.status === 1) {
