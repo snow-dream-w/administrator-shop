@@ -23,11 +23,6 @@ const router = new Router({
       component: () => import('@/views/LoginDialog.vue')
     },
     {
-      path: '/order',
-      name: 'order',
-      component: () => import('@/views/Order/Order.vue')
-    },
-    {
       path: '/orderDetail',
       name: 'orderDetail',
       component: () => import('@/views/Order/OrderDetail.vue')

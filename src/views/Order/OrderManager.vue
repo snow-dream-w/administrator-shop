@@ -20,7 +20,7 @@
         </el-table>
       </template>
     </el-table-column>
-    <el-table-column label="订单编号" prop="_id" width="120" align="center"></el-table-column>
+    <el-table-column label="订单编号" prop="_id" width="115" align="center"></el-table-column>
     <el-table-column label="实付款" width="110" align="center">
       <template slot-scope="scope">￥{{scope.row.total.toFixed(2)}}</template>
     </el-table-column>

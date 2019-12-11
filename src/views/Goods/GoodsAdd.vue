@@ -78,7 +78,7 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisibleImage" size="tiny" class="avatar">
-            <img width="100%" :src="axios.defaults.baseURL + dialogImageUrl" class="avatar" />
+            <img width="100%" :src="dialogImageUrl" class="avatar" />
           </el-dialog>
         </el-form-item>
 
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import options from '@/assets/menu'
+import options from "@/assets/menu";
 export default {
   data() {
     const checkName = (rule, value, callback) => {
@@ -162,17 +162,27 @@ export default {
     };
   },
   methods: {
+    /**
+     * 移除图片
+     */
     handleRemove(file, fileList) {
+      // console.log(file.response.data) /goods_image/1576074539808.png
       this.axios
         .post("/goods/dropImage", { filename: file.response.data })
         .then(result => {
-          console.log(result);
+          this.ruleForm.images.splice(this.ruleForm.images.indexOf(file.response.data), 1) 
         });
     },
+    /**
+     * 显示图片
+     */
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisibleImage = true;
     },
+    /**
+     * 监听图片数量
+     */
     handleExceed(files, fileList) {
       this.$message.warning(
         `当前限制选择 4 个图片，本次选择了 ${
@@ -180,39 +190,52 @@ export default {
         } 个文件，共选择了 ${files.length + fileList.length} 个文件`
       );
     },
+    /**
+     * 响应上传成功
+     */
     handleImageSuccess(res, file) {
       this.ruleForm.images.push(res.data);
+      console.log(this.ruleForm.images)
     },
+    /**
+     * 响应类型改变
+     */
     handleChange(value) {
       this.ruleForm.types = value[0];
       this.ruleForm.type = value[1];
     },
+    /**
+     * 提交信息
+     */
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.ruleForm.price = new Number(this.ruleForm.price);
           this.ruleForm.inventoryNum = new Number(this.ruleForm.inventoryNum);
           this.axios.post("/goods/add", this.ruleForm).then(result => {
-            if(result.data.status === 1){
+            if (result.data.status === 1) {
               this.$message({
-                type: 'success',
-                message: '添加商品成功'
-              })
-              this.$refs.ruleForm.resetFields()
-              this.$refs.imagefile.clearFiles()
+                type: "success",
+                message: "添加商品成功"
+              });
+              this.$refs.ruleForm.resetFields();
+              this.$refs.imagefile.clearFiles();
             } else {
               this.$message({
-                type: 'warning',
+                type: "warning",
                 message: result.data.data
-              })
+              });
             }
           });
         } else {
-          this.$message.error("error submit!!")
+          this.$message.error("error submit!!");
           return false;
         }
       });
     },
+    /**
+     * 重置信息
+     */
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }

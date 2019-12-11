@@ -59,9 +59,15 @@ export default {
     };
   },
   methods: {
+    /**
+     * 监听表单变化
+     */
     changeValue() {
       this.point = "";
     },
+    /**
+     * 提交数据
+     */
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -74,8 +80,8 @@ export default {
               if (res.data.status === 0) {
                 this.point = res.data.data;
               } else {
+                console.log(res.data.data)
                 if (res.data.data.role !== "666") {
-                  console.log(res);
                   this.axios.get("/user/logout");
                   this.point = "账号或密码输入错误";
                 } else {
@@ -90,6 +96,9 @@ export default {
         }
       });
     },
+    /**
+     * 重置表单
+     */
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }

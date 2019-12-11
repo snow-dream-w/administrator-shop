@@ -49,10 +49,12 @@
         </template>
       </el-table-column>
     </el-table>
+    <AddOrUpdateDialog />
   </div>
 </template>
 <script>
 import GoodsSearch from "@/components/GoodsSearch";
+import AddOrUpdateDialog from "./AddOrUpdateDialog";
 export default {
   data() {
     return {
@@ -62,6 +64,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * 确认删除商品
+     */
     confirmDeleteGoods(_id) {
       this.$confirm("此操作永久删除该商品, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -78,6 +83,9 @@ export default {
           });
         });
     },
+    /**
+     * 删除商品
+     */
     handleDelete(_id) {
       this.axios
         .post("/goods/delete", {
@@ -100,6 +108,9 @@ export default {
           }
         });
     },
+    /**
+     * 确认下架商品
+     */
     confirmShelfGoods(_id) {
       this.$confirm("此操作将下架该商品, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -116,6 +127,9 @@ export default {
           });
         });
     },
+    /**
+     * 下架商品
+     */
     shelfGoodsInfo(_id) {
       this.axios
         .post("/goods/shelves", {
@@ -138,6 +152,9 @@ export default {
           }
         });
     },
+    /**
+     * 获取下架商品
+     */
     getShelfGoods(status) {
       this.axios.get(`/goods/shelf/${status}`).then(result => {
         if (result.data.status === 1) {
@@ -148,6 +165,9 @@ export default {
         }
       });
     },
+    /**
+     * 初始化商品数据
+     */
     init(type) {
       this.axios
         .get("/goods/query", {
@@ -169,6 +189,9 @@ export default {
     }
   },
   watch: {
+    /**
+     * 监听路由变化
+     */
     "$route.path": function() {
       const type = this.$route.params.type;
       if (type === "shelf") {
@@ -180,7 +203,8 @@ export default {
     }
   },
   components: {
-    GoodsSearch
+    GoodsSearch,
+    AddOrUpdateDialog
   },
   created() {
     const type = this.$route.params.type;

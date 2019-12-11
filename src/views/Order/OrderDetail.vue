@@ -4,7 +4,8 @@
     <div class="content">
       <div class="left">
         <div class="address">
-          <span>收货信息：</span><br>
+          <span>收货信息：</span>
+          <br />
           <span class="telephone">手机号：{{data.addresses.telephone}}</span>
           <br />
           <span class="name">姓名：{{data.addresses.name}}</span>
@@ -33,13 +34,16 @@
     </div>
     <div class="title" style="marginTop: 15px;">商品信息</div>
     <div class="address">
-      <el-table :data="data.tableData" border style="width: 100%" id="table" >
+      <el-table :data="data.tableData" border style="width: 100%" id="table">
         <el-table-column label="商品" width="879" align="center">
           <template slot-scope="scope">
             <el-table :data="scope.row.goods" border style="width: 100%">
               <el-table-column width="120" align="center">
                 <template slot-scope="scope">
-                  <img :src="axios.defaults.baseURL + scope.row.image" style="width: 100px;height: 100px;" />
+                  <img
+                    :src="axios.defaults.baseURL + scope.row.image"
+                    style="width: 100px;height: 100px;"
+                  />
                 </template>
               </el-table-column>
               <el-table-column label="名称" prop="name" width="255" align="center"></el-table-column>
@@ -73,31 +77,7 @@ export default {
           orderId: 111764379537,
           payAt: "2019-9-6"
         },
-        tableData: [
-          {
-            id: 1,
-            goods: [
-              {
-                id: 1,
-                image: require("@/assets/logo.png"),
-                name: "酸奶plus",
-                price: 10.6,
-                num: 1,
-                unit: "件"
-              },
-              {
-                id: 2,
-                image: require("@/assets/logo.png"),
-                name: "酸奶plus",
-                price: 10.7,
-                num: 1,
-                unit: "件"
-              }
-            ],
-            total: "￥100.00",
-            status: "待付款"
-          }
-        ]
+        tableData: []
       }
     };
   }

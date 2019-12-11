@@ -27,6 +27,9 @@ export default {
     errorHandler() {
       return false;
     },
+    /**
+     * 退出登录
+     */
     logout() {
       this.axios.get("/user/logout").then(result => {
         if (result.data.status === 1) {

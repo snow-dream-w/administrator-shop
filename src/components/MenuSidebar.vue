@@ -58,6 +58,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * 响应商品菜单
+     */
     changeGoods(value) {
       if (value === "add") {
         this.$router.push("/manager/goodsAdd");
@@ -68,6 +71,9 @@ export default {
       }
       this.$router.push(`/manager/goodsView/${value}`);
     },
+    /**
+     * 响应订单菜单
+     */
     changeOrder(value) {
       this.$router.push(`/manager/orderManager/${value}`);
     }
