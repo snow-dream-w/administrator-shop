@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="编辑商品" :visible.sync="dialogVisible" width="625px">
+  <el-dialog title="编辑商品" :visible.sync="dialogVisible" :before-close="closeDialog" width="625px">
     <el-form
       :model="ruleForm"
       status-icon
@@ -61,18 +61,18 @@
           style="width:150px"
         ></el-input>
       </el-form-item>
-      <el-form-item label="上传图片限制四张">
+      <el-form-item label="上传图片限制十张">
         <!-- :action="axios.defaults.baseURL + '/goods/upload_goods_image'" -->
         <el-upload
           ref="imagefile"
-          action="#"
+          :action="axios.defaults.baseURL + '/goods/upload_goods_image'"
           list-type="picture-card"
-          :limit="4"
+          :limit="10"
           :on-exceed="handleExceed"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
           :on-success="handleImageSuccess"
-          :file-list="ruleForm.images"
+          :file-list="imagesList"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
@@ -91,6 +91,20 @@
 <script>
 import options from "@/assets/menu";
 export default {
+  props: {
+    ruleForm: {
+      type: Object,
+      default: () => ({})
+    },
+    type: {
+      type: Array,
+      default: () => ([])
+    },
+    imagesList: {
+      type: Array,
+      default: () => ([])
+    }
+  },
   data() {
     const checkName = (rule, value, callback) => {
       if (!value) {
@@ -130,34 +144,10 @@ export default {
         }
       }, 500);
     };
-
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       dialogVisibleImage: false,
       dialogImageUrl: "",
-      fileList: [],
-      ruleForm: {
-        name: "",
-        description: "",
-        price: "",
-        specification: "",
-        unit: "",
-        inventoryNum: "",
-        types: "",
-        type: "",
-        images: [
-          {
-            name: "food.jpeg",
-            url:
-              "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-          },
-          {
-            name: "food2.jpeg",
-            url:
-              "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-          }
-        ]
-      },
       rules: {
         name: [{ validator: checkName, required: true, trigger: "blur" }],
         price: [{ validator: checkPrice, required: true, trigger: "blur" }],
@@ -167,21 +157,40 @@ export default {
         ],
         types: [{ required: true, message: "请选择类型", trigger: "blur" }]
       },
-      type: [],
       options: options
     };
   },
   methods: {
     /**
+     * 初始化商品信息
+     */
+    init() {
+      this.dialogVisible = true;
+    },
+    /**
+     * 关闭窗口之前的回调
+     */
+    closeDialog() {
+      const type = this.$route.params.type;
+      this.$emit('init', type)
+      this.dialogVisible = false
+    },
+    /**
      * 移除图片
      */
     handleRemove(file, fileList) {
-      console.log(file, fileList);
-      //   this.axios
-      //     .post("/goods/dropImage", { filename: file.response.data })
-      //     .then(result => {
-      //       //   this.ruleForm.images.splice(this.ruleForm.images.indexOf(file.response.data), 1)
-      //     });
+      this.axios
+        .post("/goods/dropImage", {
+          filename: file.response ? file.response.data : file.name
+        })
+        .then(result => {
+          this.ruleForm.images.splice(
+            this.ruleForm.images.indexOf(
+              file.response ? file.response.data : file.name
+            ),
+            1
+          );
+        });
     },
     /**
      * 显示图片
@@ -195,16 +204,14 @@ export default {
      */
     handleExceed(files, fileList) {
       this.$message.warning(
-        `当前限制选择 4 个图片，本次选择了 ${
-          files.length
-        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+        `当前限制选择 10 个图片，本次选择了 ${files.length} 个文件，共选择了 ${fileList.length} 个文件`
       );
     },
     /**
      * 响应上传成功
      */
     handleImageSuccess(res, file) {
-      //   this.ruleForm.images.push(res.data);
+      this.ruleForm.images.push(res.data);
     },
     /**
      * 响应类型改变
@@ -217,31 +224,29 @@ export default {
      * 提交信息
      */
     submitForm(formName) {
-      console.log(this.ruleForm);
-      //   this.$refs[formName].validate(valid => {
-      //     if (valid) {
-      //       this.ruleForm.price = new Number(this.ruleForm.price);
-      //       this.ruleForm.inventoryNum = new Number(this.ruleForm.inventoryNum);
-      //       this.axios.post("/goods/add", this.ruleForm).then(result => {
-      //         if (result.data.status === 1) {
-      //           this.$message({
-      //             type: "success",
-      //             message: "添加商品成功"
-      //           });
-      //           this.$refs.ruleForm.resetFields();
-      //           this.$refs.imagefile.clearFiles();
-      //         } else {
-      //           this.$message({
-      //             type: "warning",
-      //             message: result.data.data
-      //           });
-      //         }
-      //       });
-      //     } else {
-      //       this.$message.error("error submit!!");
-      //       return false;
-      //     }
-      //   });
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.axios.put("/goods/update", this.ruleForm).then(result => {
+            if (result.data.status === 1) {
+              this.$message({
+                type: "success",
+                message: "修改商品成功"
+              });
+              const type = this.$route.params.type;
+              this.$emit('init', type)
+              this.dialogVisible = false;
+            } else {
+              this.$message({
+                type: "warning",
+                message: result.data.data
+              });
+            }
+          });
+        } else {
+          this.$message.error("error submit!!");
+          return false;
+        }
+      });
     },
     /**
      * 重置信息

@@ -16,7 +16,9 @@
       </el-table-column>
       <el-table-column prop="name" label="名称" width="140" align="center"></el-table-column>
       <el-table-column prop="description" label="描述" width="180" align="center"></el-table-column>
-      <el-table-column prop="price" label="单价" width="140" align="center"></el-table-column>
+      <el-table-column label="单价" width="140" align="center">
+        <template slot-scope="scope">￥{{ scope.row.price.toFixed(2) }}</template>
+      </el-table-column>
       <el-table-column prop="inventoryNum" label="库存" width="140" align="center"></el-table-column>
       <el-table-column prop="unit" label="单位" width="120" align="center"></el-table-column>
       <el-table-column label="操作" width="182" align="center">
@@ -25,7 +27,7 @@
             v-if="scope.row.status === 1"
             size="mini"
             type="primary"
-            @click="$message.error('编辑，暂不可用')"
+            @click="editGoodsInfo(scope.row)"
           >编辑</el-button>
           <el-button
             v-if="scope.row.status === 1"
@@ -37,7 +39,7 @@
             v-if="scope.row.status === 0"
             size="mini"
             type="primary"
-            @click="$message.error('重新上架，暂不可用')"
+            @click="confirmAddGoods(scope.row._id)"
           >重新上架</el-button>
           <el-button
             v-if="scope.row.status === 0"
@@ -49,18 +51,27 @@
         </template>
       </el-table-column>
     </el-table>
-    <AddOrUpdateDialog />
+    <UpdateDialog
+      ref="update"
+      @init="init"
+      :ruleForm="goodsInfo"
+      :type="type"
+      :imagesList="imagesList"
+    />
   </div>
 </template>
 <script>
 import GoodsSearch from "@/components/GoodsSearch";
-import AddOrUpdateDialog from "./AddOrUpdateDialog";
+import UpdateDialog from "./UpdateDialog";
 export default {
   data() {
     return {
       tableData: [],
       controllerStatus: false,
-      limit: 100
+      limit: 100,
+      goodsInfo: {},
+      type: [],
+      imagesList: []
     };
   },
   methods: {
@@ -88,8 +99,9 @@ export default {
      */
     handleDelete(_id) {
       this.axios
-        .post("/goods/delete", {
-          _id: _id
+        .put("/goods/delete_add", {
+          _id: _id,
+          status: 2
         })
         .then(result => {
           if (result.data.status === 1) {
@@ -132,7 +144,7 @@ export default {
      */
     shelfGoodsInfo(_id) {
       this.axios
-        .post("/goods/shelves", {
+        .put("/goods/shelves", {
           _id: _id
         })
         .then(result => {
@@ -142,6 +154,51 @@ export default {
                 this.tableData.splice(index, 1);
                 this.$message({
                   message: "下架成功",
+                  type: "success"
+                });
+                break;
+              }
+            }
+          } else {
+            this.$message.error(result.data.data);
+          }
+        });
+    },
+    /**
+     * 确认重新上架
+     */
+    confirmAddGoods(_id) {
+      this.$confirm("此操作重新上架该商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.addGoodsInfo(_id);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    /**
+     * 上架商品
+     */
+    addGoodsInfo(_id) {
+      this.axios
+        .put("/goods/delete_add", {
+          _id: _id,
+          status: 1
+        })
+        .then(result => {
+          if (result.data.status === 1) {
+            for (let index = 0; index < this.tableData.length; index++) {
+              if (this.tableData[index]._id === _id) {
+                this.tableData.splice(index, 1);
+                this.$message({
+                  message: "重新上架成功",
                   type: "success"
                 });
                 break;
@@ -164,6 +221,25 @@ export default {
           this.tableData = [];
         }
       });
+    },
+    /**
+     * 打开编辑窗口
+     */
+    editGoodsInfo(goodsInfo) {
+      this.goodsInfo = goodsInfo;
+      const type = [];
+      type.push(goodsInfo.types);
+      type.push(goodsInfo.type);
+      this.type = type;
+      this.imagesList = this.goodsInfo.images.reduce((result, value) => {
+        const obj = {
+          name: value,
+          url: this.axios.defaults.baseURL + value
+        };
+        result.push(obj);
+        return result;
+      }, []);
+      this.$refs.update.init();
     },
     /**
      * 初始化商品数据
@@ -204,7 +280,7 @@ export default {
   },
   components: {
     GoodsSearch,
-    AddOrUpdateDialog
+    UpdateDialog
   },
   created() {
     const type = this.$route.params.type;

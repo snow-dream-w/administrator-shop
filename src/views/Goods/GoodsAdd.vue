@@ -64,12 +64,12 @@
             style="width:150px"
           ></el-input>
         </el-form-item>
-        <el-form-item label="上传图片限制四张">
+        <el-form-item label="上传图片限制十张">
           <el-upload
             ref="imagefile"
             :action="axios.defaults.baseURL + '/goods/upload_goods_image'"
             list-type="picture-card"
-            :limit="4"
+            :limit="10"
             :on-exceed="handleExceed"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
@@ -185,7 +185,7 @@ export default {
      */
     handleExceed(files, fileList) {
       this.$message.warning(
-        `当前限制选择 4 个图片，本次选择了 ${
+        `当前限制选择 10 个图片，本次选择了 ${
           files.length
         } 个文件，共选择了 ${files.length + fileList.length} 个文件`
       );
